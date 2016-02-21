@@ -1,0 +1,8 @@
+KeyWord	ROBOT_Simulate
+Name	Simulated Controller
+reset	True
+link	0,0
+marker	0,0
+baseXYZ	0,0,0
+angle	0,0,0
+RTMX	1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1

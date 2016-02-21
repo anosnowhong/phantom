@@ -1,0 +1,74 @@
+cmake_minimum_required(VERSION 2.8.11)
+#*****************************
+# 1. cd to build folder
+# 2. cmake -G "Visual Studio 12" ..
+# 3. or cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+# depend on what type of project you want.
+#*****************************
+
+PROJECT( libphantom )
+
+##find_package(OpenGL REQUIRED)
+
+#include DIR
+set(OCULUS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libsource/include/Oculus)
+set(GLEW_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libsource/include/GLEW)
+#library DIR
+set(GLEW_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/GLEW)
+set(OCULUS_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/Oculus)
+# exe output DIR
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
+#collect file in a list
+file(GLOB LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.lib
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/glm.obj
+  ${GLEW_LIB_DIR}/*.lib ${OCULUS_LIB_DIR}/*.lib
+  )
+
+#for using find opengl
+##include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${GLEW_INCLUDE_DIR} ${OCULUS_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libsource/include ${GLEW_INCLUDE_DIR} ${OCULUS_INCLUDE_DIR})
+
+#set compile and link flags
+#VERBOSE:lib print out the lib directories that linker search, NODEFAULTLIB: omit specified lib
+#these options are important,
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:msvcrtd.lib")
+set(CMAKE_CXX_FLAGS "/MT /DOS_WIN32 /DDOS /DANSI /DOVR_OS_WIN32")
+#turn off safeseh as problem with win626.obj, it is compiled by James.
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+#reset all default options
+#shoud use MT option in this project.
+ if(MSVC)
+	set(CMAKE_CXX_FLAGS_DEBUG_INIT "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+	set(CMAKE_CXX_FLAGS "/MT /DOS_WIN32 /DDOS /DANSI /DOVR_OS_WIN32")
+	set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT     "/MT /O1 /Ob1 /D NDEBUG")
+	set(CMAKE_CXX_FLAGS_RELEASE_INIT        "/MT /O2 /Ob2 /D NDEBUG")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "/MT /Zi /O2 /Ob1 /D NDEBUG")
+  endif()
+#force replace MD with MT
+#you should also specify the flags in command line, declare this project as release project otherwise cmake will regard it as default
+foreach(flag_var
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    if(${flag_var} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+    endif(${flag_var} MATCHES "/MD")
+endforeach(flag_var)
+#print out for debug
+##message(STATUS "========" ${CMAKE_CXX_FLAGS})
+
+#include subdirecotry build lib-motor.lib
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libsource)
+add_subdirectory(libsource)
+
+
+#===================
+#=====EXE===========
+#===================
+#OCULUS DEMO
+add_executable(oculus ${CMAKE_CURRENT_SOURCE_DIR}/src/oculus_demo.cpp)
+target_link_libraries(oculus motor ${LIBS} winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)
+#target_link_libraries(oculus motor ${LIBS}  ${OPENGL_LIBRARIES})
+
+#ROBOT UTILITY
+add_executable(utility ${CMAKE_CURRENT_SOURCE_DIR}/src/robot_utility.cpp)
+target_link_libraries(utility motor ${LIBS} winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)

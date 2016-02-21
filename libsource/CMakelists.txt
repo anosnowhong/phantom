@@ -1,0 +1,95 @@
+cmake_minimum_required(VERSION 2.8.11)
+project (libphantom)
+
+#version.obj matrix.obj mem.obj timer.obj isa.obj atift.obj general.obj opto.obj optobuff.obj optodata.obj kalmanfilter.obj ekf.obj 
+#graphics.obj oculus.obj config.obj mmtimer.obj looptask.obj fob.obj str.obj spmx.obj goggles.obj trigger.obj cmdarg.obj com.obj
+#kb.obj optorigid.obj atexit.obj file.obj stim.obj ni-daq.obj tracking.obj snms.obj dataproc.obj matdat.obj datafile.obj controller.obj
+#sensoray.obj phantomisa.obj robot-object.obj robot.obj temptrak.obj mouse.obj cyberglove.obj beeper.obj waveplay.obj winfit.obj 
+#winfit2.obj button.obj asensor.obj devices.obj ramper.obj permutelist.obj metaconfig.obj liberty.obj PMove.obj EyeLink1000.obj 
+#EyeT.obj 
+
+set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+#reset the macro
+set(PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
+#include glew headers
+set(GLEW_INCLUDE_DIR ${PROJECT_INCLUDE_DIR}/GLEW)
+#include oculus headers
+set(OCULUS_INCLUDE_DIR ${PROJECT_INCLUDE_DIR}/Oculus)
+
+#include all cpp file in the list
+file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
+file(GLOB HEADERS ${PROJECT_INCLUDE_DIR}/*.h)
+
+#input lib includes obj and lib suffix
+set(LIBRARY_INPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+#set(GLEW_LIB_PATH ${LIBRARY_INPUT_PATH}/GLEW)
+#set(OCULUS_LIB_PATH ${LIBRARY_INPUT_PATH}/Oculus)
+
+#just need the soucre file to build a lib and a little lib(siappmt.lib and the eyetracker lib)
+file(GLOB LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/siappmt.lib)
+file(GLOB OBJLIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.obj)
+
+#exclude the file that doesn't have a header
+list(REMOVE_ITEM SOURCES 
+	#exclude the file that doesn't have header
+	${PROJECT_SOURCE_DIR}/fob-cmds.cpp ${PROJECT_SOURCE_DIR}/fob-data.cpp ${PROJECT_SOURCE_DIR}/fob-info.cpp
+	${PROJECT_SOURCE_DIR}/fob-open.cpp ${PROJECT_SOURCE_DIR}/fob-stub.cpp ${PROJECT_SOURCE_DIR}/fob-task.cpp
+
+	#included by matirx.cpp
+	${PROJECT_SOURCE_DIR}/mtx-add.cpp ${PROJECT_SOURCE_DIR}/mtx-compare.cpp ${PROJECT_SOURCE_DIR}/mtx-concat-old.cpp
+	${PROJECT_SOURCE_DIR}/mtx-data.cpp ${PROJECT_SOURCE_DIR}/mtx-display.cpp ${PROJECT_SOURCE_DIR}/mtx-divide.cpp
+	${PROJECT_SOURCE_DIR}/mtx-extract.cpp ${PROJECT_SOURCE_DIR}/mtx-file.cpp ${PROJECT_SOURCE_DIR}/mtx-functions.cpp
+	${PROJECT_SOURCE_DIR}/mtx-maths.cpp ${PROJECT_SOURCE_DIR}/mtx-memory.cpp ${PROJECT_SOURCE_DIR}/mtx-multiply.cpp
+	${PROJECT_SOURCE_DIR}/mtx-sort.cpp ${PROJECT_SOURCE_DIR}/mtx-subtract.cpp ${PROJECT_SOURCE_DIR}/mtx-concat.cpp
+
+	#exclude useless phantom
+	${PROJECT_SOURCE_DIR}/phantom-encoder.cpp ${PROJECT_SOURCE_DIR}/phantom-motor.cpp ${PROJECT_SOURCE_DIR}/phantom-ramp.cpp
+	${PROJECT_SOURCE_DIR}/phantom-temperature.cpp ${PROJECT_SOURCE_DIR}/phantom-convert.cpp ${PROJECT_SOURCE_DIR}/phantom-ft.cpp
+	${PROJECT_SOURCE_DIR}/phantom-default.cpp ${PROJECT_SOURCE_DIR}/phantom.cpp
+
+	#exclude the file that doesn't have header
+	${PROJECT_SOURCE_DIR}/robot-default.cpp ${PROJECT_SOURCE_DIR}/robot-convert.cpp ${PROJECT_SOURCE_DIR}/robot-encoder.cpp
+	${PROJECT_SOURCE_DIR}/robot-FT.cpp ${PROJECT_SOURCE_DIR}/robot-log.cpp ${PROJECT_SOURCE_DIR}/robot-motor.cpp
+	${PROJECT_SOURCE_DIR}/robot-ramp.cpp ${PROJECT_SOURCE_DIR}/robot-sensor.cpp ${PROJECT_SOURCE_DIR}/robot-temperature.cpp
+	${PROJECT_SOURCE_DIR}/robot-wc.cpp ${PROJECT_SOURCE_DIR}/robot-handle.cpp 
+
+	#exclude the file that doesn't have header
+	${PROJECT_SOURCE_DIR}/ni-daq-status.cpp ${PROJECT_SOURCE_DIR}/ni-daq-devices.cpp 
+
+	#exclude graphics-old as graphics include it
+	${PROJECT_SOURCE_DIR}/graphics-old.cpp 
+
+	#exclude graphics-old as graphics include it
+	${PROJECT_SOURCE_DIR}/sequencer.cpp 
+
+	)
+
+  if(MSVC)
+	set(CMAKE_CXX_FLAGS_DEBUG_INIT "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+	set(CMAKE_CXX_FLAGS "/MT /DOS_WIN32 /DDOS /DANSI /DOVR_OS_WIN32")
+	set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT     "/MT /O1 /Ob1 /D NDEBUG")
+	set(CMAKE_CXX_FLAGS_RELEASE_INIT        "/MT /O2 /Ob2 /D NDEBUG")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "/MT /Zi /O2 /Ob1 /D NDEBUG")
+  endif()
+
+foreach(flag_var
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    if(${flag_var} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+    endif(${flag_var} MATCHES "/MD")
+endforeach(flag_var)
+
+#final output
+set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+include_directories(${PROJECT_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${OCULUS_INCLUDE_DIR})
+#specify directories that linker will look for
+link_directories(${LIBRARY_INPUT_PATH})
+
+message(STATUS "========" ${CMAKE_CXX_FLAGS})
+#set (CMAKE_SHARED_LINKER_FLAGS "-Wl,--as-needed")
+
+add_library(motor STATIC ${SOURCES} ${HEADERS})
+target_link_libraries(motor ${OBJLIBS} ${LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/lib/siappmt.lib)
+

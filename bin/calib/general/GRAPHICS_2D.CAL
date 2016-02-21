@@ -1,0 +1,5 @@
+Xmin,Xmax	-18,18
+Ymin,Ymax	-14.25,14.25
+Zmin,Zmax	0,0
+Centre		0,0,0
+Matrix		1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1

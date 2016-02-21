@@ -1,0 +1,6 @@
+Xmin,Xmax	-25,25
+Ymin,Ymax	-13,6
+Zmin,Zmax	-12,12
+Centre	0,0,0
+ValidationError	59.78125
+Matrix	1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1

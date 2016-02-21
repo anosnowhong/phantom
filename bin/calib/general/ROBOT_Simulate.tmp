@@ -1,0 +1,12 @@
+T_Air	25
+ER_Cu	0,0,0,0,0,0
+DAC2I	0,0,0,0,0,0
+TR_Cu2Fe	0,0,0,0,0,0
+TR_Fe2Air	0,0,0,0,0,0
+MassCu	0,0,0,0,0,0
+MassFe	0,0,0,0,0,0
+T_OverHeat	100
+T_Cooled	75
+T_Cu	0,0,0,0,0,0
+T_Fe	0,0,0,0,0,0
+t_Save	1160505130
