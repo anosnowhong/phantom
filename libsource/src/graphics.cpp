@@ -19,7 +19,6 @@
 /*       JNI 28/Jan/2015 - Graphics monitor window for desktop display.       */
 /*                                                                            */
 /******************************************************************************/
-
 #define MODULE_NAME     "GRAPHICS"
 #define MODULE_TEXT     "Graphics (OpenGL/GLUT) Module"
 #define MODULE_DATE     "28/01/2015"
@@ -207,7 +206,7 @@ BOOL GRAPHICS_Cnfg( char *file )
 BOOL ok;
 
     CONFIG_reset();
-
+	
     // Set up variable table for configuration...
     CONFIG_set("Description",GRAPHICS_Description);
     CONFIG_set("StereoMode",GRAPHICS_StereoModeString);
@@ -1538,6 +1537,7 @@ int display;
     // Start mouse processing...
     if( !MOUSE_Start() )
     {
+
         GRAPHICS_errorf("GRAPHICS_Start() Cannot start mouse processing.\n");
     }
 

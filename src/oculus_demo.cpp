@@ -37,7 +37,7 @@ TIMER_Frequency GraphicsIdleFrequencyTimer("GraphicsIdleFrequency");
 STRING RobotName="";
 int    RobotID=ROBOT_INVALID;
 matrix RobotPosition(3,1);             // cm
-matrix RobotFakePosition(3, 1);
+matrix MousePosition(3, 1);
 matrix RobotPositionRaw(3,1);          // cm
 matrix RobotPositionOffset(3,1);       // cm
 matrix RobotVelocity(3,1);             // cm/sec
@@ -54,6 +54,7 @@ matrix SpherePosition_Goal(3,1);
 double SphereRadius=10.0; // cm
 int    SphereColor=GREEN;
 BOOL   SphereInsideFlag=FALSE;
+BOOL   draw_MOUSE=FALSE;
 
 double CursorRadius=1.0; // cm
 int    CursorColor=RED;
@@ -119,9 +120,17 @@ void GraphicsDraw( void )
     // Fixed object.
     GRAPHICS_WireSphere(&SpherePosition,SphereRadius,SphereColor);
     //GRAPHICS_WireSphere(&SpherePosition_Goal,SphereRadius,SphereColor);
-    // Robot cursor.
-    GRAPHICS_Sphere(&RobotPosition,CursorRadius,CursorColor);
-    //GRAPHICS_Sphere(&RobotFakePosition,CursorRadius,CursorColor);
+	if (draw_MOUSE == TRUE)
+	{
+		//Mouse cursor
+		MOUSE_GetPosn(MousePosition);
+		GRAPHICS_Sphere(&MousePosition, CursorRadius, CursorColor);
+	}
+	else
+	{
+		// Robot cursor.
+		GRAPHICS_Sphere(&RobotPosition, CursorRadius, CursorColor);
+	}
 
     GraphicsDrawLatencyTimer.Before();
 }
@@ -142,7 +151,7 @@ void GraphicsKeyboard( BYTE key, int x, int y )
 void GraphicsStart( void )
 {
     // Start the graphics system.
-    if( !GRAPHICS_GraphicsStart() )
+	if (!GRAPHICS_GraphicsStart())
     {
         printf("Cannot start graphics system.\n");
         return;
@@ -302,6 +311,10 @@ int i;
             case 'R' :
                ok = CMDARG_data(RobotName,data,STRLEN);
                break;
+
+			case 'O' :
+				draw_MOUSE = TRUE;
+				break;
 
             case '?' :
                Usage();
