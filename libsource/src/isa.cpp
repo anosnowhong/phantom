@@ -162,6 +162,7 @@ HANDLE  fh=INVALID_HANDLE_VALUE;
     {
         ISA_errorf("ISA_patch() GIVEIO device could not be opened.\n");
     }
+ok = TRUE;
 
     return(ok);
 }

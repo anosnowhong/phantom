@@ -1,0 +1,24 @@
+main
+	Parameters
+	DATAFILE_Check
+	ConfigInit
+	ConfigLoad
+		ConfigSetup
+		ConfigInit
+	Initialize
+	TrialList
+		TrialListSubset
+			TargetAngleVector
+		TrialSetup
+			StateGraphicsNext(State);
+			TriggerOff
+		StateNext(STATE_INITIALIZE)
+	DeviceStart
+	GraphicsStart
+	GraphicsMainLoop
+		glutDisplayFunc(GraphicsDisplay);
+		glutDisplayFunc(GraphicsDisplay)
+			GraphicsDisplayText
+		glutIdleFunc(GraphicsIdle);
+    
+    

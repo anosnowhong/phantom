@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # depend on what type of project you want.
 #*****************************
 
-PROJECT( libphantom )
+PROJECT( phantom_eyetracker )
 
 ##find_package(OpenGL REQUIRED)
 
@@ -31,7 +31,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libsource/include ${GLEW_INCLUDE
 #set compile and link flags
 #VERBOSE:lib print out the lib directories that linker search, NODEFAULTLIB: omit specified lib
 #these options are important,
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:msvcrtd.lib")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:LIBCMT.lib")
 set(CMAKE_CXX_FLAGS "/MT /DOS_WIN32 /DDOS /DANSI /DOVR_OS_WIN32")
 #turn off safeseh as problem with win626.obj, it is compiled by James.
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
@@ -60,7 +60,7 @@ endforeach(flag_var)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libsource)
 add_subdirectory(libsource)
 
-
+#message(STATUS "========" ${LIBS})
 #===================
 #=====EXE===========
 #===================
@@ -69,6 +69,18 @@ add_executable(oculus ${CMAKE_CURRENT_SOURCE_DIR}/src/oculus_demo.cpp)
 target_link_libraries(oculus motor ${LIBS} winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)
 #target_link_libraries(oculus motor ${LIBS}  ${OPENGL_LIBRARIES})
 
+#ROBOT experiment
+add_executable(DynamicLearning ${CMAKE_CURRENT_SOURCE_DIR}/src/DynamicLearning.cpp)
+target_link_libraries(DynamicLearning motor ${LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/lib/iViewHMDAPI.lib winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)
+
 #ROBOT UTILITY
 add_executable(utility ${CMAKE_CURRENT_SOURCE_DIR}/src/robot_utility.cpp)
 target_link_libraries(utility motor ${LIBS} winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)
+
+#EYE TRACKER oculus demo
+add_executable(eye_tracker_demo ${CMAKE_CURRENT_SOURCE_DIR}/src/oculus_eyetracker.cpp)
+target_link_libraries(eye_tracker_demo motor ${LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/lib/iViewHMDAPI.lib winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)
+
+#EYE TRACKER Calibration
+add_executable(eyetracker_calibration ${CMAKE_CURRENT_SOURCE_DIR}/src/eyetracker_calibration.cpp )
+target_link_libraries(eyetracker_calibration motor ${LIBS}  winmm opengl32 glu32 user32 gdi32 kernel32 shell32 ws2_32)

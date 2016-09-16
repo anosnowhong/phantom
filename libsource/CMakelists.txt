@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 2.8.11)
 project (libphantom)
 
-#version.obj matrix.obj mem.obj timer.obj isa.obj atift.obj general.obj opto.obj optobuff.obj optodata.obj kalmanfilter.obj ekf.obj 
-#graphics.obj oculus.obj config.obj mmtimer.obj looptask.obj fob.obj str.obj spmx.obj goggles.obj trigger.obj cmdarg.obj com.obj
-#kb.obj optorigid.obj atexit.obj file.obj stim.obj ni-daq.obj tracking.obj snms.obj dataproc.obj matdat.obj datafile.obj controller.obj
-#sensoray.obj phantomisa.obj robot-object.obj robot.obj temptrak.obj mouse.obj cyberglove.obj beeper.obj waveplay.obj winfit.obj 
-#winfit2.obj button.obj asensor.obj devices.obj ramper.obj permutelist.obj metaconfig.obj liberty.obj PMove.obj EyeLink1000.obj 
-#EyeT.obj 
+#input lib includes obj and lib suffix
+set(LIBRARY_INPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+#set(OCULUS_KERNEL_LIB  ${PROJECT_SOURCE_DIR}/lib/LibOVRKernel.lib)
 
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 #reset the macro
@@ -17,11 +14,10 @@ set(GLEW_INCLUDE_DIR ${PROJECT_INCLUDE_DIR}/GLEW)
 set(OCULUS_INCLUDE_DIR ${PROJECT_INCLUDE_DIR}/Oculus)
 
 #include all cpp file in the list
-file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
+#file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
+file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/*.cpp ${OCULUS_INCLUDE_DIR}/GL ${OCULUS_INCLUDE_DIR}/Kernel ${OCULUS_INCLUDE_DIR}/Tracing ${OCULUS_INCLUDE_DIR}/Util)
 file(GLOB HEADERS ${PROJECT_INCLUDE_DIR}/*.h)
 
-#input lib includes obj and lib suffix
-set(LIBRARY_INPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #set(GLEW_LIB_PATH ${LIBRARY_INPUT_PATH}/GLEW)
 #set(OCULUS_LIB_PATH ${LIBRARY_INPUT_PATH}/Oculus)
 
@@ -62,6 +58,10 @@ list(REMOVE_ITEM SOURCES
 	#exclude graphics-old as graphics include it
 	${PROJECT_SOURCE_DIR}/sequencer.cpp 
 
+	#exclude eyetracker
+	#${PROJECT_SOURCE_DIR}/eyetracker_hmd.cpp 
+
+	#${PROJECT_SOURCE_DIR}/Oculus.cpp 
 	)
 
   if(MSVC)
@@ -87,9 +87,9 @@ include_directories(${PROJECT_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${OCULUS_INCLUDE_
 #specify directories that linker will look for
 link_directories(${LIBRARY_INPUT_PATH})
 
-message(STATUS "========" ${CMAKE_CXX_FLAGS})
+#message(STATUS "========" ${CMAKE_CXX_FLAGS})
 #set (CMAKE_SHARED_LINKER_FLAGS "-Wl,--as-needed")
 
 add_library(motor STATIC ${SOURCES} ${HEADERS})
-target_link_libraries(motor ${OBJLIBS} ${LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/lib/siappmt.lib)
+target_link_libraries(motor ${OBJLIBS} ${LIBS} ${CMAKE_CURRENT_SOURCE_DIR}/lib/iViewHMDAPI.lib ${CMAKE_CURRENT_SOURCE_DIR}/lib/siappmt.lib ${OCULUS_KERNEL_LIB})
 

@@ -19,6 +19,7 @@
 /*       JNI 28/Jan/2015 - Graphics monitor window for desktop display.       */
 /*                                                                            */
 /******************************************************************************/
+
 #define MODULE_NAME     "GRAPHICS"
 #define MODULE_TEXT     "Graphics (OpenGL/GLUT) Module"
 #define MODULE_DATE     "28/01/2015"
@@ -206,7 +207,7 @@ BOOL GRAPHICS_Cnfg( char *file )
 BOOL ok;
 
     CONFIG_reset();
-	
+
     // Set up variable table for configuration...
     CONFIG_set("Description",GRAPHICS_Description);
     CONFIG_set("StereoMode",GRAPHICS_StereoModeString);
@@ -440,9 +441,11 @@ char *file;
     }
 
     if( !STR_null(GRAPHICS_Description,STRLEN) )
-    {
+	{
+		
         GRAPHICS_debugf("%s.\n",GRAPHICS_Description);
     }
+
 
     GRAPHICS_TextInit();
 
@@ -1391,9 +1394,9 @@ void GRAPHICS_Stop( void )
 
 BOOL GRAPHICS_Start( char *cnfg, int mode, int wid, int hgt, char *name, int &ID )
 {
-int glut=GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE;
-BOOL ok=TRUE;
-int display;
+	int glut=GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE;
+	BOOL ok=TRUE;
+	int display;
 
     GRAPHICS_messgf("GRAPHICS_Start(cnfg=%s,mode=0x%02X,wid=%d,hgt=%d,name=%s)\n",cnfg,mode,wid,hgt,name);
 
@@ -1441,7 +1444,7 @@ int display;
            }
 
            if(GRAPHICS_StereoMode == GRAPHICS_STEREO_OCULUS )
-           {
+           {   
                if( !(ok=GRAPHICS_OculusStart(name)) )
                {
                    break;
@@ -1463,6 +1466,7 @@ int display;
            break;
 
         case GRAPHICS_DISPLAY_2D :          // 2D...
+				
            GRAPHICS_Display = GRAPHICS_DISPLAY_MONO;
            GRAPHICS_Dimensions = GRAPHICS_2D;
            break;
@@ -1481,14 +1485,16 @@ int display;
     // Some stuff either already done or not applicable to Oculus HMD...
     if( GRAPHICS_StereoMode != GRAPHICS_STEREO_OCULUS )
     {
-        // Configure display if required.
+		// Configure display if required.
         if( !GRAPHICS_DisplayConfigure(ON) )
         {
             GRAPHICS_errorf("GRAPHICS_Start() Invalid display configuration.\n");
         }
 
-        // Initialize GLUT...
+		// Initialize GLUT...
         GRAPHICS_GlutInit(glut,wid,hgt);
+
+		printf("ihihihi i am here=====!!!!\n");
 
         // Create default window...
         ID = glutCreateWindow(name);
@@ -1537,7 +1543,6 @@ int display;
     // Start mouse processing...
     if( !MOUSE_Start() )
     {
-
         GRAPHICS_errorf("GRAPHICS_Start() Cannot start mouse processing.\n");
     }
 

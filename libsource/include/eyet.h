@@ -11,6 +11,8 @@
 /* V1.0  JNI 18/Jun/2011 - Initial development.                               */
 /*                                                                            */
 /******************************************************************************/
+#ifndef EYET_H
+#define EYET_H
 
 #define EYET_errorf printf
 #define EYET_messgf printf
@@ -60,3 +62,4 @@ void EYECOM_LoopTask( void );
 
 /******************************************************************************/
 
+#endif

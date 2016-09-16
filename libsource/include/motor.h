@@ -40,6 +40,8 @@
 #include <time.h>
 #include <process.h>
 
+#include <wingdi.h>
+
 /***********************************/
 /* Nortern Digital OptoTrak...     */
 /***********************************/
@@ -82,6 +84,7 @@
 #include <Extras/OVR_CAPI_Util.h>
 #include <Extras/OVR_Math.h>
 #include <Extras/OVR_StereoProjection.h>
+#include <Kernel/OVR_Types.h>
 
 extern "C" void ovrhmd_EnableHSWDisplaySDKRender( ovrHmd hmd, ovrBool enabled );
 
@@ -160,15 +163,21 @@ extern "C" void ovrhmd_EnableHSWDisplaySDKRender( ovrHmd hmd, ovrBool enabled );
 #include <devices.h>          // LIBRARY: motor.lib MODULE: devices.obj        
 #include <permutelist.h>      // LIBRARY: motor.lib MODULE: permutelist.obj        
 #include <pmove.h>            // LIBRARY: motor.lib MODULE: pmove.obj        
-#include <EyeLink1000.h>      // LIBRARY: motor.lib MODULE: EyeLink1000.obj        
-#include <EyeT.h>             // LIBRARY: motor.lib MODULE: EyeT.obj        
+//#include <EyeT.h>             // LIBRARY: motor.lib MODULE: EyeT.obj        
+//#include <EyeLink1000.h>      // LIBRARY: motor.lib MODULE: EyeLink1000.obj        
 
 /***********************************/
 /* GLM library (Graphical OBJs)... */
 /***********************************/
 #include <glm.h>
 
+
 /******************************************************************************/
+/*EyeTracker HMD*/
+/******************************************************************************/
+#include <EyeTracker/iViewHMDAPI.h>
+#include <eyetracker_hmd.h>
+//#include <eyetrackercpp_hmd.h>
 
 #endif  MOTOR_H
 

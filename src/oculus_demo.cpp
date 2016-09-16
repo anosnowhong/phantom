@@ -36,8 +36,12 @@ TIMER_Frequency GraphicsIdleFrequencyTimer("GraphicsIdleFrequency");
 
 STRING RobotName="";
 int    RobotID=ROBOT_INVALID;
+
 matrix RobotPosition(3,1);             // cm
-matrix MousePosition(3, 1);
+matrix RobotFakePosition(3, 1);
+matrix original_point(3,1,0.0);
+matrix target_point(3,1,3.0);
+
 matrix RobotPositionRaw(3,1);          // cm
 matrix RobotPositionOffset(3,1);       // cm
 matrix RobotVelocity(3,1);             // cm/sec
@@ -51,13 +55,15 @@ TIMER_Interval  RobotLoopLatencyTimer("RobotLoopLatency");
 
 matrix SpherePosition(3,1);
 matrix SpherePosition_Goal(3,1);
-double SphereRadius=10.0; // cm
+double SphereRadius=5.0; // cm
 int    SphereColor=GREEN;
 BOOL   SphereInsideFlag=FALSE;
-BOOL   draw_MOUSE=FALSE;
 
 double CursorRadius=1.0; // cm
 int    CursorColor=RED;
+
+double TargetRadius=2.5; // cm
+int	   TargetColor = TURQUOISE;
 
 // Graphics Monitor Window variables.
 int    MonitorX=100;     // Monitor window X-position (pixels)
@@ -120,17 +126,13 @@ void GraphicsDraw( void )
     // Fixed object.
     GRAPHICS_WireSphere(&SpherePosition,SphereRadius,SphereColor);
     //GRAPHICS_WireSphere(&SpherePosition_Goal,SphereRadius,SphereColor);
-	if (draw_MOUSE == TRUE)
-	{
-		//Mouse cursor
-		MOUSE_GetPosn(MousePosition);
-		GRAPHICS_Sphere(&MousePosition, CursorRadius, CursorColor);
-	}
-	else
-	{
-		// Robot cursor.
-		GRAPHICS_Sphere(&RobotPosition, CursorRadius, CursorColor);
-	}
+    // Robot cursor.
+    GRAPHICS_Sphere(&RobotPosition,CursorRadius,CursorColor);
+    GRAPHICS_Sphere(&original_point,CursorRadius,YELLOW);
+
+	//BBX
+    GRAPHICS_WireSphere(&SpherePosition,SphereRadius,SphereColor);
+    //GRAPHICS_Sphere(&RobotFakePosition,CursorRadius,CursorColor);
 
     GraphicsDrawLatencyTimer.Before();
 }
@@ -151,7 +153,7 @@ void GraphicsKeyboard( BYTE key, int x, int y )
 void GraphicsStart( void )
 {
     // Start the graphics system.
-	if (!GRAPHICS_GraphicsStart())
+    if( !GRAPHICS_GraphicsStart() )
     {
         printf("Cannot start graphics system.\n");
         return;
@@ -190,15 +192,26 @@ static double d,e;
     RobotLoopLatencyTimer.Before();
 
     RobotPositionRaw = P;
-    RobotPosition = P;
+
+	RobotPosition(1, 1) = P(1, 1);
+	RobotPosition(2, 1) = P(2, 1);
+	RobotPosition(3, 1) = P(3, 1);
+
+	//Translate cursor 
+	RobotPosition(2, 1) += 43.5;
+	RobotPosition(3, 1) -= 51.1;
+
+    //After change the calibration file, need restore it here incase the cursor too far away
+    //1.589987159,36.23830414,-57.38533783
+	/*
+    RobotPosition(1, 1) -= 1.589987159;
+    RobotPosition(2, 1) += 79.7383041;
+    RobotPosition(3, 1) -= 108.485338;
+	*/
+
     RobotVelocity = V;
     RobotForces.zeros();
 
-	//printf("%f", RobotPosition(3, 1));
-	RobotPosition(3, 1) += 45;
-	RobotPosition(2, 1) -= 20;
-	RobotPosition(1, 1) += 20;
-	//printf("===========%f", RobotPosition(3, 1));
 	D = RobotPosition - SpherePosition;
     d = norm(D);
     e = d - SphereRadius; // Scalar encroachment into surface of sphere.
@@ -312,10 +325,6 @@ int i;
                ok = CMDARG_data(RobotName,data,STRLEN);
                break;
 
-			case 'O' :
-				draw_MOUSE = TRUE;
-				break;
-
             case '?' :
                Usage();
                break;
@@ -357,11 +366,14 @@ void main( int argc, char *argv[] )
 
     // Position of sphere in simulation.
     SpherePosition.zeros();
-    //SpherePosition_Goal.zeros();
+	SpherePosition(3, 1) = -20.0;
+	SpherePosition(2, 1) -= 20;
+    SpherePosition_Goal.zeros();
 	//RobotFakePosition.zeros();
     
-	SpherePosition(3, 1) = -10.0;
-	//SpherePosition_Goal(2, 1) += 30.0;
+	SpherePosition_Goal(3, 1) = -20.0;
+	SpherePosition_Goal(1, 1) += 20.0;
+	//printf("================%f, %f, %f", SpherePosition(1, 1), SpherePosition(2, 1), SpherePosition(3, 1));
 
     // Start robot.
     if( RobotStart() )

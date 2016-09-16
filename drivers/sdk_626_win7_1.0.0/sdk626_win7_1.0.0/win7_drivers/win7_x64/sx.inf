@@ -1,0 +1,91 @@
+;sxdrv98 driver win7 64bit
+;Driver for 626 only
+;Please note.  Sensoray model 826 is recommended for new designs
+;Copyright: Sensoray Company Inc. 2010-2012
+[Version]
+signature="$Windows NT$"
+Class=Media
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%Sens%
+CatalogFile=sxdrv98.cat
+DriverVer=08/18/2015, 2.0.3
+
+[Manufacturer]
+%SensMfg%=Sensoray,NTamd64
+
+[SourceDisksFiles]
+sxdrv98.sys=1
+
+[DestinationDirs]
+sx.CopyDrivers=10,system32\drivers
+
+[Sensoray.NTamd64]
+
+;%sx11.DeviceDesc%=sxdrv.Device,PCI\VEN_109E&DEV_0350	; 848
+;%sx11.DeviceDesc%=sxdrv.Device,PCI\VEN_109E&DEV_0351	; 849
+
+;%sx20.DeviceDesc%=sxdrv.Device,PCI\VEN_10B5&DEV_9050
+
+;%String3%=sxdrv.Device,PCI\VEN_1131&DEV_7146&SUBSYS_06176000
+%sx26.DeviceDesc%=sxdrv.Device,PCI\VEN_1131&DEV_7146&SUBSYS_02726000
+
+
+
+[sxdrv.Device.NTamd64]
+CopyFiles=sx.CopyDrivers
+AddReg=sxdrv.AddReg
+
+[sxdrv.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,sxdrv98.sys
+
+[sx.CopyDrivers]
+sxdrv98.sys
+
+[SourceDisksNames]
+1=%SENSORAYInstallDisk%,,,""
+
+[sxdrv.Device.NTamd64.Services]
+AddService = sxdrv,0x00000002,sxdrv.ServiceInstall
+
+[sxdrv.ServiceInstall]
+DisplayName   = %sxdrv.DriverDesc%
+ServiceType   = %SERVICE_KERNEL_DRIVER%
+StartType     = %SERVICE_DEMAND_START%
+ErrorControl  = %SERVICE_ERROR_NORMAL%
+ServiceBinary = %12%\sxdrv98.sys
+
+;---------------------------------------------------------------
+;                S t r i n g s
+;---------------------------------------------------------------
+
+[Strings]
+
+;----------------
+; Non-Localizable
+;----------------
+
+SERVICE_KERNEL_DRIVER=1
+SERVICE_AUTO_START=2
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1
+
+
+;----------------
+; Localizable
+;----------------
+String1=           "Sensoray Co."
+String2=           "Sensoray Co."
+String3=           "Model 617 JPEG capture board"
+
+Sens=              "Sensoray"
+SensMfg=           "Sensoray"
+sxdrv.DriverDesc=  "Sensoray SX Driver"
+
+sx11.DeviceDesc=   "Sensoray Model X11 Frame Grabber"
+
+sx20.DeviceDesc=   "Sensoray Model X20 Digital I/O"
+
+sx26.DeviceDesc=   "Sensoray Model 626 Analog/Digital I/O"
+SENSORAYInstallDisk="SENSORAY Install CD"
+

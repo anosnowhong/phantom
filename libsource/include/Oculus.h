@@ -14,8 +14,13 @@
 /*                                                                            */
 /******************************************************************************/
 
+#ifndef OCULUS_H
+#define OCULUS_H
 #define OCULUS_DEBUG() if( !OCULUS_API_start(printf,printf,printf) ) { printf("Cannot start OCULUS API.\n"); exit(0); }
 
+typedef OVR::Vector3f Vector3f;
+typedef OVR::Matrix4f Matrix4f;
+typedef OVR::Vector4f Vector4f;
 /******************************************************************************/
 
 extern  PRINTF  OCULUS_PRN_messgf;      // General messages printf function.
@@ -32,6 +37,8 @@ extern  PRINTF  OCULUS_PRN_debugf;      // Debug information printf function.
 #define OCULUS_CONFIG "OCULUS.CFG"
 
 /******************************************************************************/
+#include <Extras/OVR_Math.h>
+#include <Kernel/OVR_Types.h>
 
 int  OCULUS_messgf( const char *mask, ... );
 int  OCULUS_errorf( const char *mask, ... );
@@ -54,6 +61,7 @@ void OCULUS_GraphicsDisplay( void (*draw)( void ) );
 void OCULUS_GraphicsDisplay( void );
 
 void OCULUS_QuaternionToRotationMatrix( float *quat, float *mat );
+void OCULUS_QuaternionToRotationMatrix( double *quat, double *mat );
 UINT OCULUS_NextPower2( UINT x );
 
 void OCULUS_GridBuild( float xmin, float xmax, float ymin, float ymax, float zpos, int grid, int ID );
@@ -65,9 +73,14 @@ void OCULUS_DisplayOnHMD( void );
 void OCULUS_DisplayOnDeskTop( void );
 void OCULUS_DisplayToggle( void );
 
+BOOL OCULUS_GetPose(ovrPosef& pose);
+BOOL OCULUS_GetViewProjection(Matrix4f& M, float &scale);
+
 void OCULUS_TimingResults( void );
 
 BOOL OCULUS_GlutKeyboard( BYTE key, int x, int y );
+
+#endif
 
 /******************************************************************************/
 
